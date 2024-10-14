@@ -1,0 +1,26 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'app/css/styles.css' %}">
+
+<h1>Мы в соцсетях</h1>
+<div class="resource-link">
+    <a href="https://telegram.org" target="_blank">
+        <img src="{% static 'app/content/telegram_logo.png' %}" alt="Telegram Logo" />
+    </a>
+    <span>Мы в Telegram</span>
+</div>
+<div class="resource-link">
+    <a href="https://vk.com" target="_blank">
+        <img src="{% static 'app/content/vk_logo.png' %}" alt="VK Logo" />
+    </a>
+    <span>Мы в ВКонтакте</span>
+</div>
+<div class="resource-link">
+    <a href="https://mail.yandex.ru" target="_blank">
+        <img src="{% static 'app/content/yandex_mail_logo.png' %}" alt="Yandex Mail Logo" />
+    </a>
+    <span>Почта для сотрудничества/обратной связи</span>
+</div>
+{% endblock %}
