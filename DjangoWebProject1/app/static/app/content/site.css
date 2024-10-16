@@ -95,3 +95,10 @@ input[type="checkbox"].input-validation-error {
     .resource-link span {
         font-size: 16px;
     }
+
+.custom-img {
+    width: 300px; /* Фиксированная ширина */
+    height: auto; /* Автоматическая высота */
+    display: block;
+    margin: 10px 0;
+}
