@@ -1,4 +1,4 @@
-"""
+﻿"""
 Definition of forms.
 """
 
@@ -16,3 +16,23 @@ class BootstrapAuthenticationForm(AuthenticationForm):
                                widget=forms.PasswordInput({
                                    'class': 'form-control',
                                    'placeholder':'Password'}))
+
+   
+
+class AnketaForm(forms.Form):
+    name = forms.CharField(label='Вашe имя', min_length=2, max_length=100)
+    city = forms.CharField(label='Ваш город', min_length=2, max_length=100)
+    gender = forms.ChoiceField(label='Ваш пол',
+                               choices=[('1', 'Женский'), ('2', 'Мужской')],
+                               widget=forms.RadioSelect, initial=1)
+    job = forms.ChoiceField(label='Ваш род занятий',
+                            choices=(('1', 'учусь'),
+                                     ('2', 'работаю'),
+                                     ('3', 'отдыхаю'),
+                                     ('4', 'в поисках себя')), initial=1)
+    notice = forms.BooleanField(label='Получать новости о нас на e-mail?',
+                                required=False)
+    email = forms.EmailField(label='Ваш e-mail', min_length=7)
+    message = forms.CharField(label='Нам интересно узнать о Вас что-то новое. Если Вы не против, расскажите о себе',
+                              widget=forms.Textarea(attrs={'rows': 12, 'cols': 20}))
+
