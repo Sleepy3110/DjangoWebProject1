@@ -49,7 +49,7 @@ def links(request):
 def anketa(request):
    assert isinstance(request, HttpRequest)
    data = None 
-   gender = {'1': 'Женщина', '2': 'Мужчина'}
+   gender = {'1': 'Женский', '2': 'Мужской'}
    job = {'1': 'учусь', '2': 'работаю',
          '3': 'отдыхаю', '4': 'в поисках себя'} 
    if request.method == 'POST':

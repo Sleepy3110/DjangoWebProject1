@@ -32,7 +32,7 @@ class AnketaForm(forms.Form):
                                      ('4', 'в поисках себя')), initial=1)
     notice = forms.BooleanField(label='Получать новости о нас на e-mail?',
                                 required=False)
-    email = forms.EmailField(label='Ваш e-mail', min_length=7)
-    message = forms.CharField(label='Нам интересно узнать о Вас что-то новое. Если Вы не против, расскажите о себе',
+    email = forms.EmailField(label='Ваш e-mail (для связи с Вами)', min_length=7)
+    message = forms.CharField(label='Нам интересно узнать о Вас что-то новое. Если Вы не против, расскажите о себе.И расскажите,понравилось ли Вам у нас',
                               widget=forms.Textarea(attrs={'rows': 12, 'cols': 20}))
 
