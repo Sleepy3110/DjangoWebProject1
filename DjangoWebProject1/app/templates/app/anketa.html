@@ -1,7 +1,9 @@
 ﻿{% extends "app/layout.html" %}
 {% block content %}
 {% if form != None %}
-<br> <h2>Отправьте, пожалуйста, заполненную анкету</h2><br>
+<br>
+<h2>Отправьте, пожалуйста, заполненную анкету</h2>
+<br>
 <div>
     <form method="post">
         {% csrf_token %}
@@ -10,7 +12,7 @@
         <label for="{{ form.city.id_for_label }}">{{ form.city.label }}:</label>
         {{ form.city }}<br>
         <label for="{{ form.gender.id_for_label }}">{{ form.gender.label }}:</label>
-        {{form.gender }}
+        {{ form.gender }}
         <label for="{{ form.job.id_for_label }}">{{ form.job.label }}:</label><br>
         {{ form.job }}<br><br>
         <label for="{{ form.notice.id_for_label }}">{{ form.notice.label }}:</label>
@@ -19,22 +21,52 @@
         {{ form.email }}<br><br>
         <label for="{{ form.message.id_for_label }}">{{ form.message.label }}:</label><br>
         {{ form.message }}<br><br>
-        <input type="submit" value="Отправить">
+        <input type="submit" value="Отправить" id="submitButton">
     </form>
 </div>
 {% else %}
-    <br><h2>Благодарим за предоставленную информацию!</h2>
-    <h3>Вы сообщили о себе следующее:</h3>
-    <ul>
+<br>
+<h2>Благодарим за предоставленную информацию!</h2>
+<h3>Вы сообщили о себе следующее:</h3>
+<ul>
     <li><span>Имя: </span> {{ data.name }}</li>
     <li><span>Город: </span> {{ data.city }}</li>
     <li><span>Пол:</span> {{ data.gender }}</li>
     <li><span>Ваш род занятий: </span> {{ data.job }}</li>
-    <li> <span>Получать новости сайта на e-mail:</span> 
-        {{data.notice }}
+    <li>
+        <span>Получать новости сайта на e-mail:</span>
+        {{ data.notice }}
     </li>
-    <li><span>Baш e-mail(для связи с Вами):</span> {{ data.email }}</li>
+    <li><span>Ваш e-mail(для связи с Вами):</span> {{ data.email }}</li>
     <li><span>Информация о Вас и Ваших предпочтениях и пожеланиях: </span> {{ data.message }}</li>
 </ul>
 {% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const button = document.querySelector('#submitButton');
+        const inputs = document.querySelectorAll('input, textarea, select');
+
+        // Изменение цвета текста кнопки при наведении
+        button.addEventListener('mouseover', function() {
+            button.style.color = '#FC6C85';
+        });
+
+        button.addEventListener('mouseout', function() {
+            button.style.color = '';
+        });
+
+        // Изменение цвета фона полей ввода при фокусе
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                input.style.backgroundColor = '#CEE1F2';
+            });
+
+            input.addEventListener('blur', function() {
+                input.style.backgroundColor = '';
+            });
+        });
+    });
+</script>
+
 {% endblock %}
