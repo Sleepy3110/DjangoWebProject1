@@ -1,0 +1,9 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+
+<h2> {{post_1.title}} </h2>
+<p> {{post_1.content|linebreaksbr}} </p>      {# вывод текста по абзацам#}
+<p> <a href="{% url 'blog' %}" class="back-link">Назад</a></p>
+
+    {% endblock %}

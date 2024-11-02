@@ -56,6 +56,8 @@
     <Folder Include="DjangoWebProject1\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\templates\app\blog.html" />
+    <Content Include="app\templates\app\blogpost.html" />
     <Content Include="app\templates\app\links.html" />
     <Content Include="app\templates\app\anketa.html" />
     <Content Include="app\templates\app\registration.html" />
