@@ -102,10 +102,17 @@ input[type="checkbox"].input-validation-error {
     display: block;
     margin: 10px 0;
 }
-.back-link, .read_more {
-    color: #FF6666; /*меняем цвет для кнопки "назад"*/
+.back-link, .read_more, .comment-date {
+    color: #FF6666; /*меняем цвет для кнопки "назад", "читать дальше", цвет для даты коммента */
 }
-.back-link:hover, .read_more:hover {
+.back-link:hover, .read_more:hover { /*при наведении*/
     color: palevioletred
     }
+
+.save.btn.btn-default:hover {
+    color: #FC6C85; /* Цвет текста при наведении "отправить коммент"  */
+}
+.comment-author {
+    font-size: 20px; /
+}
 

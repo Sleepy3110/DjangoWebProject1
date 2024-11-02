@@ -26,4 +26,21 @@ class Blog(models. Model):
         ordering = ["-posted"] #порядок сортировки данных в модели ("-" означает по убыванию)
         verbose_name = "статья блога" # имя, под которым модель будет отображаться в административном разделе (для одной статьи блога)
         verbose_name_plural = "статьи блога" # тоже для всех статей блога
+
 admin.site.register(Blog)
+class Comment (models.Model):
+    text = models.TextField(verbose_name = "Текст комментария")
+    date = models.DateTimeField(default = datetime.now(), db_index = True, verbose_name = "Дата комментария") 
+    author = models.ForeignKey(User, on_delete = models.CASCADE, verbose_name = "Автор комментария") 
+    post = models.ForeignKey(Blog, on_delete = models.CASCADE, verbose_name = "Статья комментария")
+    #Методы класса:
+    def __str__(self): #метод возвращает название, используемое для представления отдельных записей в административном разделе
+        return 'Комментарий %d %s к  %s' %(self.id, self.author, self.post)
+    #Метаданные - вложенный класс, который задает дополнительные параметры модели
+    class Meta:
+        db_table = "Comment"
+        ordering = ["-date"]
+        verbose_name = "Комментарии к статье блога"
+        verbose_name_plural = "Комментарии к статьям блога"
+
+admin.site.register(Comment)
