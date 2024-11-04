@@ -113,6 +113,18 @@ input[type="checkbox"].input-validation-error {
     color: #FC6C85; /* ÷вет текста при наведении "отправить коммент"  */
 }
 .comment-author {
-    font-size: 20px; /
+    font-size: 20px; /*размер имени автора коммента*/
 }
+
+.carousel-inner .item {
+    text-align: center;
+}
+
+.carousel-inner .item img {
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+    }
+
+
 
