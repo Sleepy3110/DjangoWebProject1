@@ -9,6 +9,10 @@ from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from app import forms, views
 
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns 
+from django.conf import settings
+
 
 
 urlpatterns = [
@@ -34,4 +38,9 @@ urlpatterns = [
     path('registration/', views. registration, name= 'registration'),
     path('blog/', views.blog, name='blog'),
     path('blogpost/<int:parametr>/', views.blogpost, name='blogpost'),
+    path('newpost/', views.newpost, name='newpost'),
+
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT) 
+urlpatterns += staticfiles_urlpatterns()

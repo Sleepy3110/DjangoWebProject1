@@ -11,6 +11,7 @@ from django.db import models
 from .models import Blog
 from .models import Comment # использование модели комментариев
 from .forms import CommentForm # использование формы ввода комментария
+from .forms import BlogForm # использование формы ввода статьи блога
 
 def home(request):
     """Renders the home page."""
@@ -157,3 +158,29 @@ def blogpost(request, parametr):
         }
 
 )
+
+def newpost(request):
+    """Renders the newpost page."""
+    assert isinstance(request, HttpRequest)
+    if request.method == "POST":        # после отправки формы:
+        blogform = BlogForm(request.POST, request.FILES) 
+        if blogform.is_valid():
+            blog_f = blogform.save(commit=False)
+            blog_f.posted = datetime.now()
+            blog_f.autor = request.user
+            blog_f.save()               # сохраняем изменения после добавления полей
+            
+            return redirect('blog')     # переадресация на страницу Блог после создания статьи Блога
+    else:
+        blogform= BlogForm()            # создание объекта формы для ввода данных
+    return render(
+        request,
+        'app/newpost.html',
+        {
+            'blogform': blogform,       # передача формы в шаблон веб-страницы
+            'title': 'Добавить статью блога',
+            'year': datetime.now().year,
+            }
+    )
+
+

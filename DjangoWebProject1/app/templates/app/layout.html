@@ -35,6 +35,9 @@
                     <li><a href="{% url 'registration' %}">Регистрация</a></li>
                     {% endif %}
                     <li><a href="{% url 'blog' %}">Блог</a></li>
+                    {% if user.is_superuser %}
+                    <li><a href="{% url 'newpost' %}">Добавить статью</a></li>
+                    {% endif %}
                 </ul>
                 {% include 'app/loginpartial.html' %}
             </div>
