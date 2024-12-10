@@ -1,0 +1,90 @@
+{% extends "app/layout.html" %}
+{% block content %}
+<h2>Заказы</h2>
+<div class="orders-container">
+    {% for order in orders %}
+    <div class="order-card">
+        <h3>Заказ #{{ order.id }}</h3>
+        <p><strong>Имя:</strong> {{ order.name }}</p>
+        <p><strong>Телефон:</strong> {{ order.phone }}</p>
+        <p>
+            <strong>Статус:</strong>
+            <select class="status-select" data-order-id="{{ order.id }}">
+                {% for status_choice in order.STATUS_CHOICES %}
+                <option value="{{ status_choice.0 }}" {% if status_choice.0 == order.status %}selected{% endif %}>{{ status_choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p><strong>Стоимость:</strong> {{ order.total_amount }} ₽</p>
+        <details>
+            <summary>Детали о заказе</summary>
+            <table class="order-details">
+                <tr>
+                    <th>Способ оплаты</th>
+                    <td>{{ order.get_payment_method_display }}</td>
+                </tr>
+                <tr>
+                    <th>Дата создания</th>
+                    <td>{{ order.created_at }}</td>
+                </tr>
+                <tr>
+                    <th>Товары</th>
+                    <td>
+                        <ul>
+                            {% for item in order.items.all %}
+                            <li>{{ item.product_name }} ({{ item.quantity }} x {{ item.price }} ₽)</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </details>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const statusSelects = document.querySelectorAll('.status-select');
+
+        statusSelects.forEach(select => {
+            select.addEventListener('change', () => {
+                const orderId = select.dataset.orderId;
+                const newStatus = select.value;
+
+                fetch(`/update_order_status/${orderId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Статус заказа успешно обновлен.');
+                        } else {
+                            alert('Произошла ошибка при обновлении статуса заказа.');
+                        }
+                    });
+            });
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+{% endblock %}

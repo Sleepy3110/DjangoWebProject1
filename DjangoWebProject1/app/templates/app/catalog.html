@@ -1,0 +1,69 @@
+{% extends "app/layout.html" %}
+{% load static %}
+{% block content %}
+
+<div class="search-container">
+    <input type="text" class="search-input" placeholder="Поиск сладостей...">
+    <button class="search-button">
+        <svg class="paw-icon" viewBox="0 0 512 512">
+            <path fill="white" d="M226.5 92.9c14.3 42.9-.3 86.2-32.6 96.8s-70.1-15.6-84.4-58.5s.3-86.2 32.6-96.8s70.1 15.6 84.4 58.5zM100.4 198.6c18.9 32.4 14.3 70.1-10.2 84.1s-59.7-.9-78.5-33.3S-2.7 179.3 21.8 165.3s59.7 .9 78.5 33.3zM69.2 401.2C121.6 259.9 214.7 224 256 224s134.4 35.9 186.8 177.2c3.6 9.7 5.2 20.1 5.2 30.5v1.6c0 25.8-20.9 46.7-46.7 46.7c-11.5 0-22.9-1.4-34-4.2l-88-22c-15.3-3.8-31.3-3.8-46.6 0l-88 22c-11.1 2.8-22.5 4.2-34 4.2C84.9 480 64 459.1 64 433.3v-1.6c0-10.4 1.6-20.8 5.2-30.5zM421.8 282.7c-24.5-14-29.1-51.7-10.2-84.1s54-47.3 78.5-33.3s29.1 51.7 10.2 84.1s-54 47.3-78.5 33.3zM310.1 189.7c-32.3-10.6-46.9-53.9-32.6-96.8s52.1-69.1 84.4-58.5s46.9 53.9 32.6 96.8s-52.1 69.1-84.4 58.5z" />
+        </svg>
+    </button>
+</div>
+
+<div class="categories">
+    {% for category in categories %}
+    <button class="category-btn" data-category="{{ category.id }}">{{ category.name }}</button>
+    {% endfor %}
+</div>
+
+<div class="products-grid" id="productsGrid">
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-image" style="background-image: url('/media/{{ product.fields.image }}');"></div>
+        <h3 class="product-title">{{ product.fields.name }}</h3>
+        <p class="product-desc">{{ product.fields.description }}</p>
+        <p class="product-price">{{ product.fields.price }} ₽</p>
+        <button class="add-to-cart" onclick="addToCart({{ product.pk }}, 'product')">Добавить в корзину</button>
+    </div>
+    {% endfor %}
+
+    {% for drink in drinks %}
+    <div class="product-card">
+        <div class="product-image" style="background-image: url('/media/{{ drink.fields.image }}');"></div>
+        <h3 class="product-title">{{ drink.fields.name }}</h3>
+        <p class="product-desc">{{ drink.fields.description }}</p>
+        <p class="product-price">{{ drink.fields.price }} ₽</p>
+        <button class="add-to-cart" onclick="addToCart({{ drink.pk }}, 'drink')">Добавить в корзину</button>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="cart">
+    <div class="cart-header">
+        <h2>Корзина</h2>
+        <button class="close-cart">×</button>
+    </div>
+    <div class="cart-items"></div>
+    <div class="cart-total">
+        <h3>Итого: <span class="total-amount">0</span> ₽</h3>
+        <button class="checkout-btn">Перейти к оформлению</button>
+    </div>
+</div>
+
+{{ products|json_script:"products-data" }}
+{{ drinks|json_script:"drinks-data" }}
+<script src="{% static 'app/scripts/catalog.js' %}"></script>
+
+<!-- Модальное окно для авторизации -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <span class="close-auth-modal">&times;</span>
+        <h2>Для оформления заказа необходимо авторизоваться</h2>
+        <p>Пожалуйста, войдите в систему или зарегистрируйтесь.</p>
+        <button class="login-btn">Войти</button>
+        <button class="register-btn">Зарегистрироваться</button>
+    </div>
+</div>
+
+{% endblock %}

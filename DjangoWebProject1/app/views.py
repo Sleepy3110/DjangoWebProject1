@@ -12,6 +12,11 @@ from .models import Blog
 from .models import Comment # использование модели комментариев
 from .forms import CommentForm # использование формы ввода комментария
 from .forms import BlogForm # использование формы ввода статьи блога
+from django.http import JsonResponse
+from .models import Product, Drink, Category
+from .forms import ProductForm, DrinkForm
+
+
 
 def home(request):
     """Renders the home page."""
@@ -195,3 +200,204 @@ def videopost(request):
         }
     )
 
+
+
+
+
+
+
+
+
+
+
+
+
+# views.py
+
+
+
+
+
+
+from django.conf import settings
+from django.core.serializers import serialize
+import json
+from django.shortcuts import render, redirect
+from .models import Category, Product, Drink
+from .forms import ProductForm, DrinkForm
+
+def catalog(request):
+    categories = Category.objects.all()
+    products = Product.objects.all()
+    drinks = Drink.objects.all()
+
+    # Преобразуем QuerySet в список словарей и добавим поле 'model'
+    products_list = json.loads(serialize('json', products))
+    drinks_list = json.loads(serialize('json', drinks))
+
+    for product in products_list:
+        product['fields']['model'] = 'product'
+
+    for drink in drinks_list:
+        drink['fields']['model'] = 'drink'
+
+    print(f"Categories: {categories}")
+    print(f"Products: {products_list}")
+    print(f"Drinks: {drinks_list}")
+
+    return render(
+        request,
+        'app/catalog.html',
+        {
+            'categories': categories,
+            'products': products_list,
+            'drinks': drinks_list,
+            'title': 'Каталог',
+            'MEDIA_URL': settings.MEDIA_URL,
+        }
+    )
+
+def add_product(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog')
+    else:
+        form = ProductForm()
+    return render(
+        request,
+        'app/add_product.html',
+        {
+            'form': form,
+            'title': 'Добавить товар',
+        }
+    )
+
+def add_drink(request):
+    if request.method == "POST":
+        form = DrinkForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog')
+    else:
+        form = DrinkForm()
+    return render(
+        request,
+        'app/add_drink.html',
+        {
+            'form': form,
+            'title': 'Добавить напиток',
+        }
+    )
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import OrderForm
+from .models import Order, OrderItem
+from django.views.decorators.csrf import csrf_exempt
+
+@login_required
+def checkout(request):
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.total_amount = request.GET.get('total', 0)  # Получаем итоговую сумму из запроса
+            order.save()
+
+            # Сохраняем элементы заказа
+            cart = request.session.get('cart', [])
+            for item in cart:
+                OrderItem.objects.create(
+                    order=order,
+                    product_name=item['name'],
+                    price=item['price'],
+                    quantity=item['quantity']
+                )
+
+            return redirect('order_success')
+    else:
+        form = OrderForm()
+    return render(request, 'app/checkout.html', {'form': form})
+
+
+def order_success(request):
+    return render(request, 'app/order_success.html')
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Order
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'app/my_orders.html', {'orders': orders})
+
+from django.http import JsonResponse
+
+def check_auth(request):
+    return JsonResponse({'is_authenticated': request.user.is_authenticated})
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Order, OrderItem
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def save_cart(request):
+    if request.method == 'POST':
+        cart = json.loads(request.body)
+        request.session['cart'] = cart
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Order
+
+@csrf_exempt
+def cancel_order(request, order_id):
+    if request.method == 'POST':
+        try:
+            order = Order.objects.get(id=order_id, user=request.user)
+            order.delete()
+            return JsonResponse({'success': True})
+        except Order.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Заказ не найден.'})
+    return JsonResponse({'success': False, 'error': 'Неверный метод запроса.'})
+
+
+
+
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+
+@staff_member_required
+def manager_orders(request):
+    orders = Order.objects.all()
+    return render(request, 'app/manager_orders.html', {'orders': orders})
+
+@csrf_exempt
+def update_order_status(request, order_id):
+    if request.method == 'POST':
+        try:
+            order = Order.objects.get(id=order_id)
+            data = json.loads(request.body)
+            order.status = data.get('status')
+            order.save()
+            return JsonResponse({'success': True})
+        except Order.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Заказ не найден.'})
+    return JsonResponse({'success': False, 'error': 'Неверный метод запроса.'})

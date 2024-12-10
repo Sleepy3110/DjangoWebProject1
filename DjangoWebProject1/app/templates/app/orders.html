@@ -1,0 +1,40 @@
+{% extends "app/layout.html" %}
+{% block content %}
+<h1>Заказы</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Номер заказа</th>
+            <th>Статус заказа</th>
+            <th>Стоимость заказа</th>
+            <th>Номер клиента</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.status.name }}</td>
+            <td>{{ order.total_price }} ₽</td>
+            <td>{{ order.user.id }}</td>
+            <td>
+                <button onclick="cancelOrder({{ order.id }})">Отменить</button>
+                <button onclick="viewOrderDetails({{ order.id }})">Детали заказа</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    function cancelOrder(orderId) {
+        // Логика отмены заказа
+        alert('Заказ отменен');
+    }
+
+    function viewOrderDetails(orderId) {
+        // Логика просмотра деталей заказа
+        alert('Просмотр деталей заказа');
+    }
+</script>
+{% endblock %}

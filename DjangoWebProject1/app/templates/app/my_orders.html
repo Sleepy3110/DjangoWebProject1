@@ -1,0 +1,121 @@
+{% extends "app/layout.html" %}
+{% block content %}
+<h2>Мои заказы</h2>
+<div class="orders-container">
+    {% for order in orders %}
+    <div class="order-card">
+        <h3>Заказ #{{ order.id }}</h3>
+        <p><strong>Имя:</strong> {{ order.name }}</p>
+        <p><strong>Телефон:</strong> {{ order.phone }}</p>
+        <p><strong>Статус:</strong> {{ order.get_status_display }}</p>
+        <p><strong>Стоимость:</strong> {{ order.total_amount }} ₽</p>
+        <details>
+            <summary>Детали о заказе</summary>
+            <table class="order-details">
+                <tr>
+                    <th>Способ оплаты</th>
+                    <td>{{ order.get_payment_method_display }}</td>
+                </tr>
+                <tr>
+                    <th>Дата создания</th>
+                    <td>{{ order.created_at }}</td>
+                </tr>
+                <tr>
+                    <th>Товары</th>
+                    <td>
+                        <ul>
+                            {% for item in order.items.all %}
+                            <li>{{ item.product_name }} ({{ item.quantity }} x {{ item.price }} ₽)</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </details>
+        <button class="cancel-order-btn checkout-btn" data-order-id="{{ order.id }}">Отменить заказ</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Модальное окно для подтверждения отмены заказа -->
+<div id="cancelOrderModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Вы действительно хотите отменить заказ?</h2>
+        <div class="modal-buttons">
+            <button class="confirm-cancel-btn small-btn">Да</button>
+            <button class="cancel-cancel-btn small-btn">Нет</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cancelOrderBtns = document.querySelectorAll('.cancel-order-btn');
+        const modal = document.getElementById('cancelOrderModal');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const confirmCancelBtn = document.querySelector('.confirm-cancel-btn');
+        const cancelCancelBtn = document.querySelector('.cancel-cancel-btn');
+        let orderIdToCancel = null;
+
+        cancelOrderBtns.forEach(button => {
+            button.addEventListener('click', () => {
+                orderIdToCancel = button.dataset.orderId;
+                modal.style.display = 'block';
+            });
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        confirmCancelBtn.addEventListener('click', () => {
+            if (orderIdToCancel) {
+                fetch(`/cancel_order/${orderIdToCancel}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload(); // Перезагрузить страницу после успешной отмены заказа
+                        } else {
+                            alert('Произошла ошибка при отмене заказа.');
+                        }
+                    });
+            }
+            modal.style.display = 'none';
+        });
+
+        cancelCancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+
+
+{% endblock %}

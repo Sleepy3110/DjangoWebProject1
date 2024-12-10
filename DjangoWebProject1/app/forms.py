@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from .models import Comment
 from .models import Blog
+from .models import Product, Drink, Category
 
 
 class BootstrapAuthenticationForm(AuthenticationForm):
@@ -56,3 +57,61 @@ class BlogForm(forms.ModelForm):
 
 
 
+
+
+
+
+# forms.py
+
+
+
+from django import forms
+from .models import Product, Drink, Category,Order
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('name', 'description', 'price', 'image', 'category')
+        labels = {
+            'name': "Название",
+            'description': "Описание",
+            'price': "Цена",
+            'image': "Изображение",
+            'category': "Категория"
+        }
+
+class DrinkForm(forms.ModelForm):
+    class Meta:
+        model = Drink
+        fields = ('name', 'description', 'image', 'volume', 'price', 'category')
+        labels = {
+            'name': "Название",
+            'description': "Описание",
+            'image': "Изображение",
+            'volume': "Объем",
+            'price': "Цена",
+            'category': "Категория"
+        }
+
+
+from django import forms
+from .models import Order
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ('name', 'phone', 'payment_method')
+        labels = {
+            'name': "Имя",
+            'phone': "Телефон",
+            'payment_method': "Способ оплаты"
+        }
+
+
+from django import forms
+from .models import Order
+
+class OrderStatusForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ('status',)
